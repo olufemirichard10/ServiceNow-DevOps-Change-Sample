@@ -121,20 +121,14 @@ jobs:
     # type of machine to run the job on
     runs-on: ubuntu-latest
     name: 'ServiceNow DevOps Change'
-    steps:
-        - name: Checkout
-          uses: actions/checkout@v4.0.0
-        - name: ServiceNow Change
-          uses: ServiceNow/servicenow-devops-change@v2.0.0
-          with:
-            # Devops Integration Token
-            devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
-            # ServiceNow Instance URL
-            instance-url: ${{ secrets.SN_INSTANCE_URL }}
-            # Orchestration Tool Id
-            tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
-            # GitHub Context
-            context-github: ${{ toJSON(github) }}
+    steps:     
+      - name: ServiceNow Change
+        uses: ServiceNow/servicenow-devops-change@v3.0.0
+        with:
+          devops-integration-token: ${{ secrets.SN_DEVOPS_INTEGRATION_TOKEN }}
+          instance-url: ${{ secrets.SN_INSTANCE_URL }}
+          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+          context-github: ${{ toJSON(github) }}
             # Display Name of the Job
             job-name: 'ServiceNow DevOps Change'
             change-request: |
