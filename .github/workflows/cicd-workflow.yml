@@ -16,31 +16,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn clean compile
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        run: mvn clean compile
 
   test:
     name: 'Test'
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4.0.0
+      - name: Checkout
+        uses: actions/checkout@v4.0.0
         
-    - name: Run Tests with Maven
-      run: mvn -B test --file pom.xml
+      - name: Run Tests with Maven
+        run: mvn -B test --file pom.xml
 
-    - name: ServiceNow DevOps Unit Test Results
-      # You may pin to the exact commit or the version.
-      uses: ServiceNow/servicenow-devops-test-report@v2.0.0
-      with:
+      - name: ServiceNow DevOps Unit Test Results
+        # You may pin to the exact commit or the version.
+        uses: ServiceNow/servicenow-devops-test-report@v2.0.0
+        with:
           # Devops Integration Token
           devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
           # ServiceNow Instance Name
@@ -48,7 +48,7 @@ jobs:
           # Orchestration Tool Id
           tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
           # Job Name
-          job-name: 'Test' # Should be same name as declared in 'name' clause of the current Stage
+          job-name: 'Test' # Should be the same name as declared in 'name' clause of the current Stage
           # Github Context
           context-github: ${{ toJSON(github) }}
           # JUnit xml report file name with path
@@ -60,10 +60,10 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-    - name: ServiceNow DevOps Register Artifact
-      # You may pin to the exact commit or the version.          
-      uses: ServiceNow/servicenow-devops-register-artifact@v2.0.0
-      with:
+      - name: ServiceNow DevOps Register Artifact
+        # You may pin to the exact commit or the version.          
+        uses: ServiceNow/servicenow-devops-register-artifact@v2.0.0
+        with:
           # Devops Integration Token
           devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
           # ServiceNow Instance URL
@@ -89,10 +89,10 @@ jobs:
     needs: registerArtifact
     runs-on: ubuntu-latest
     steps:
-    - name: ServiceNow DevOps Register Package
-      # You may pin to the exact commit or the version.           
-      uses: ServiceNow/servicenow-devops-register-package@v2.0.0
-      with:
+      - name: ServiceNow DevOps Register Package
+        # You may pin to the exact commit or the version.           
+        uses: ServiceNow/servicenow-devops-register-package@v2.0.0
+        with:
           # Devops Integration Token
           devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
           # ServiceNow Instance URL
@@ -116,33 +116,31 @@ jobs:
           job-name: 'Register Package'
           
   change:
-  # jobs that must complete successfully before this job will run
-  needs: registerPackage
-  # type of machine to run the job on
-  runs-on: ubuntu-latest
-  name: 'ServiceNow DevOps Change'
-  steps:
-    - name: ServiceNow Change
-      uses: ServiceNow/servicenow-devops-change@v2.0.0
-      with:
-        # Devops Integration Token
-        devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
-        # ServiceNow Instance URL
-        instance-url: ${{ secrets.SN_INSTANCE_URL }}
-        # Orchestration Tool Id
-        tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
-        # GitHub Context
-        context-github: ${{ toJSON(github) }}
-        # Display Name of the Job
-        job-name: 'ServiceNow DevOps Change'
-        change-request: '{"attributes":{"requested_by":{"name": "DevOps System"},"assignment_group":{"name": "Change management"},"priority": "2","comments": "This is a sample pipeline script to be added in your change step","work_notes": "Update this to work_notes","start_date": "","end_date": ""}}'
+    # jobs that must complete successfully before this job will run
+    needs: registerPackage
+    # type of machine to run the job on
+    runs-on: ubuntu-latest
+    name: 'ServiceNow DevOps Change'
+    steps:
+      - name: ServiceNow Change
+        uses: ServiceNow/servicenow-devops-change@v2.0.0
+        with:
+          # Devops Integration Token
+          devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
+          # ServiceNow Instance URL
+          instance-url: ${{ secrets.SN_INSTANCE_URL }}
+          # Orchestration Tool Id
+          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+          # GitHub Context
+          context-github: ${{ toJSON(github) }}
+          # Display Name of the Job
+          job-name: 'ServiceNow DevOps Change'
+          change-request: '{"attributes":{"requested_by":{"name": "DevOps System"},"assignment_group":{"name": "Change management"},"priority": "2","comments": "This is a sample pipeline script to be added in your change step","work_notes": "Update this to work_notes","start_date": "","end_date": ""}}'
 
-
-          
   deploy:
     name: 'Deploy'
     needs: change
     runs-on: ubuntu-latest
     steps:
-    - name: Run deployment scripts
-      run: echo 'Deployment step in progress...'
+      - name: Run deployment scripts
+        run: echo 'Deployment step in progress...'
