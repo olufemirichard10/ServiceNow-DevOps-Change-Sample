@@ -116,33 +116,27 @@ jobs:
           job-name: 'Register Package'
           
   change:
-    # jobs that must complete successfully before this job will run
-    needs: registerPackage
-    # type of machine to run the job on
-    runs-on: ubuntu-latest
-    name: 'ServiceNow DevOps Change'
-    steps:     
-      - name: ServiceNow Change
-        uses: ServiceNow/servicenow-devops-change@v3.0.0
-        with:
-          devops-integration-token: ${{ secrets.SN_DEVOPS_INTEGRATION_TOKEN }}
-          instance-url: ${{ secrets.SN_INSTANCE_URL }}
-          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
-          context-github: ${{ toJSON(github) }}
-            # Display Name of the Job
-            job-name: 'ServiceNow DevOps Change'
-            change-request: |
-              {
-                "attributes": {
-                  "requested_by": {"name": "DevOps System"},
-                  "assignment_group": {"name": "Change management"},
-                  "priority": "2",
-                  "comments": "This is a sample pipeline script to be added in your change step",
-                  "work_notes": "Update this to work_notes",
-                  "start_date": "",
-                  "end_date": ""
-                }
-              }
+  # jobs that must complete successfully before this job will run
+  needs: registerPackage
+  # type of machine to run the job on
+  runs-on: ubuntu-latest
+  name: 'ServiceNow DevOps Change'
+  steps:
+    - name: ServiceNow Change
+      uses: ServiceNow/servicenow-devops-change@v2.0.0
+      with:
+        # Devops Integration Token
+        devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
+        # ServiceNow Instance URL
+        instance-url: ${{ secrets.SN_INSTANCE_URL }}
+        # Orchestration Tool Id
+        tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+        # GitHub Context
+        context-github: ${{ toJSON(github) }}
+        # Display Name of the Job
+        job-name: 'ServiceNow DevOps Change'
+        change-request: '{"attributes":{"requested_by":{"name": "DevOps System"},"assignment_group":{"name": "Change management"},"priority": "2","comments": "This is a sample pipeline script to be added in your change step","work_notes": "Update this to work_notes","start_date": "","end_date": ""}}'
+
 
           
   deploy:
