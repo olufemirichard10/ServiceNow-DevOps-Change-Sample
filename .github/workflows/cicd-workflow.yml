@@ -2,8 +2,7 @@
 
 name: CICD GitHub workflow
 
-on:
-  workflow_dispatch
+on: workflow_dispatch
   # push:
   #   branches: [ "main" ]
   # pull_request:
@@ -16,31 +15,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: maven
-      - name: Build with Maven
-        run: mvn clean compile
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build with Maven
+      run: mvn clean compile
 
   test:
     name: 'Test'
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4.0.0
+    - name: Checkout
+      uses: actions/checkout@v4.0.0
         
-      - name: Run Tests with Maven
-        run: mvn -B test --file pom.xml
+    - name: Run Tests with Maven
+      run: mvn -B test --file pom.xml
 
-      - name: ServiceNow DevOps Unit Test Results
-        # You may pin to the exact commit or the version.
-        uses: ServiceNow/servicenow-devops-test-report@v2.0.0
-        with:
+    - name: ServiceNow DevOps Unit Test Results
+    # You may pin to the exact commit or the version.
+      uses: ServiceNow/servicenow-devops-test-report@v2.0.0
+      with:
           # Devops Integration Token
           devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
           # ServiceNow Instance Name
@@ -48,7 +47,7 @@ jobs:
           # Orchestration Tool Id
           tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
           # Job Name
-          job-name: 'Test' # Should be the same name as declared in 'name' clause of the current Stage
+          job-name: 'Test' # Should be same name as declared in 'name' clause of the current Stage
           # Github Context
           context-github: ${{ toJSON(github) }}
           # JUnit xml report file name with path
@@ -60,10 +59,10 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: ServiceNow DevOps Register Artifact
-        # You may pin to the exact commit or the version.          
-        uses: ServiceNow/servicenow-devops-register-artifact@v2.0.0
-        with:
+    - name: ServiceNow DevOps Register Artifact
+    # You may pin to the exact commit or the version.          
+      uses: ServiceNow/servicenow-devops-register-artifact@v2.0.0
+      with:
           # Devops Integration Token
           devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
           # ServiceNow Instance URL
@@ -84,15 +83,61 @@ jobs:
               }
           ]'
 
+  # sonarScan:
+  #   name: 'Sonar Scan'
+  #   needs: registerArtifact
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Checkout
+  #     uses: actions/checkout@v4.0.0
+    
+  #   - name: ServiceNow DevOps Sonar Scan Results
+  #   # You may pin to the exact commit or the version.     
+  #     uses: ServiceNow/servicenow-devops-sonar@v2.0.0
+  #     with:
+  #         # ServiceNow Instance URL
+  #         instance-url: ${{ secrets.SN_INSTANCE_URL }}
+  #         # Devops Integration Token
+  #         devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
+  #         # Orchestration Tool Id
+  #         tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+  #         # Github Context
+  #         context-github: ${{ toJSON(github) }}
+  #         # Display Name of the Job
+  #         job-name: 'Sonar Scan'
+  #         # Sonar Host URL
+  #         sonar-host-url: ${{ secrets.SONAR_URL }}
+  #         # Sonar Project Key
+  #         sonar-project-key: ${{ secrets.SONAR_PROJECT_KEY }}
+
+  # securityScan:
+  #   name: 'Security Scan'
+  #   needs: sonarScan
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Checkout
+  #     uses: actions/checkout@v4.0.0
+
+  #   - name: ServiceNow DevOps Security Results
+  #     uses: ServiceNow/servicenow-devops-security-result@v2.0.0
+  #     with:
+  #         # Devops Integration Token
+  #         devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
+  #         instance-url: ${{ secrets.SN_INSTANCE_URL }}
+  #         tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+  #         context-github: ${{ toJSON(github) }}
+  #         job-name: 'Security Scan'
+  #         security-result-attributes: '{ "scanner": "${{ secrets.SCANNER_NAME }}", "applicationName": "${{ secrets.VULNERABILITY_APPLICATION_NAME }}", "securityToolId": "<securityToolSysId>" }'
+
   registerPackage:
     name: 'Register Package'
     needs: registerArtifact
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-lat
     steps:
-      - name: ServiceNow DevOps Register Package
-        # You may pin to the exact commit or the version.           
-        uses: ServiceNow/servicenow-devops-register-package@v2.0.0
-        with:
+    - name: ServiceNow DevOps Register Package
+    # You may pin to the exact commit or the version.           
+      uses: ServiceNow/servicenow-devops-register-package@v2.0.0
+      with:
           # Devops Integration Token
           devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
           # ServiceNow Instance URL
@@ -122,25 +167,31 @@ jobs:
     runs-on: ubuntu-latest
     name: 'ServiceNow DevOps Change'
     steps:
-      - name: ServiceNow Change
-        uses: ServiceNow/servicenow-devops-change@v1.34.2
-        with:
-          devops-integration-user-name: ${{ secrets.SN_DEVOPS_USER }}
-          devops-integration-user-password: ${{ secrets.SN_DEVOPS_PASSWORD }}
-          instance-url: ${{ secrets.SN_INSTANCE_URL }}
-          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
-          context-github: ${{ toJSON(github) }}
-          job-name: 'Deploy'
-          change-request: '{"setCloseCode":"true","autoCloseChange":true,"attributes":{"short_description":"Automated Software Deployment","description":"Automated Software Deployment.","assignment_group":"a715cd759f2002002920bde8132e7018","implementation_plan":"Software update is tested and results can be found in Test Summaries Tab; When the change is approved the implementation happens automated by the CICD pipeline within the change planned start and end time window.","backout_plan":"When software fails in production, the previous software release will be re-deployed.","test_plan":"Testing if the software was successfully deployed"}}'
-          interval: '100'
-          timeout: '3600'
-          changeCreationTimeOut: '3600'
-          abortOnChangeCreationFailure: true
-          abortOnChangeStepTimeout: true
+        - name: Checkout
+          uses: actions/checkout@v4.0.0
+        - name: ServiceNow Change
+          uses: ServiceNow/servicenow-devops-change@v2.0.0
+          with:
+            # Devops Integration Token
+            devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
+            # ServiceNow Instance URL
+            instance-url: ${{ secrets.SN_INSTANCE_URL }}
+            # Orchestration Tool Id
+            tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+            # GitHub Context
+            context-github: ${{ toJSON(github) }}
+            # Display Name of the Job
+            job-name: 'ServiceNow DevOps Change'
+            change-request: '{"attributes":{"requested_by":{"name": "DevOps System"},"assignment_group":{"name": "Change management"},"priority": "2","comments": "This is a sample pipeline script to be added in your change step","work_notes": "Update this to work_notes","start_date": "","end_date": ""}}'
+            # You can specify the requested_by attribute either with name or sys_id. Example: "requested_by":{"name": "Test User"} or "requested_by": "62826bf03710200044e0bfc8bcbe5df1"
+            # You can specify the assignment_group attribute either with name or sys_id. Example: "assignment_group":{"name": "Change Approval Team"} or "assignment_group": "5f721d93c0a8010e015533746de18bf9"
+            # start_date: Enter the planned start date
+            # end_date: Enter the planned end date
+          
   deploy:
     name: 'Deploy'
     needs: change
     runs-on: ubuntu-latest
     steps:
-      - name: Run deployment scripts
-        run: echo 'Deployment step in progress...'
+    - name: Run deployment scripts
+      run: echo 'Deployment step in progress...'
