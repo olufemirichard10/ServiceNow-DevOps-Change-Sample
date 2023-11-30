@@ -132,7 +132,7 @@ jobs:
   registerPackage:
     name: 'Register Package'
     needs: registerArtifact
-    runs-on: ubuntu-lat
+    runs-on: ubuntu-latest
     steps:
     - name: ServiceNow DevOps Register Package
     # You may pin to the exact commit or the version.           
