@@ -182,7 +182,7 @@ jobs:
             context-github: ${{ toJSON(github) }}
             # Display Name of the Job
             job-name: 'ServiceNow DevOps Change'
-            change-request: '{"setCloseCode":"true","attributes":{"short_description":"Automated Software Deployment","description":"Automated Software Deployment.","assignment_group": {"name": "DevOps Connect"},"assigned_to": {"name": "Hrijula Bose"},"requested_by": {"name": "Alpaslan Kaya"},
+            change-request: '{"setCloseCode":"true","attributes":{"short_description":"Automated Software Deployment","description":"Automated Software Deployment.","assignment_group": {"name": "Change Management"},"assigned_to": {"name": "Richie Adetimehin"},"requested_by": {"name": "Richie Adetimehin"},
 
             "implementation_plan":"Software update is tested and results can be found in Test Summaries Tab; When the change is approved the implementation happens automated by the CICD pipeline within the change planned start and end time window.",
 
