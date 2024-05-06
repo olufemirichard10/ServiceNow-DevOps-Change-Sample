@@ -186,7 +186,7 @@ jobs:
 
             "implementation_plan":"Software update is tested and results can be found in Test Summaries Tab; When the change is approved the implementation happens automated by the CICD pipeline within the change planned start and end time window.",
 
-            "backout_plan":"When software fails in production, the previous software release will be re-deployed.","u_mitigation_for_operational_impact":"Redirect traffic to another environment","u_time_for_mitigation_to_complete":"15-30 minutes","u_mitigation_is_successfully_tested":"No","u_validation_type":"Technical validation as part of this RFC","test_plan":"Testing if the software was successfully deployed"}}'
+            "backout_plan":"When software fails in production, the previous software release will be re-deployed.","test_plan":"Testing if the software was successfully deployed"}}'
           
   deploy:
     name: 'Deploy'
