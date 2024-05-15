@@ -1,8 +1,9 @@
 # This workflow uses ServiceNow custom actions that are certified by ServiceNow.
 
-name: CICD GitHub workflow
+name: CI GitHub workflow
 
-on: workflow_dispatch
+on:
+  workflow_dispatch
   # push:
   #   branches: [ "main" ]
   # pull_request:
@@ -15,31 +16,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn clean compile
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        run: mvn clean compile
 
   test:
     name: 'Test'
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4.0.0
+      - name: Checkout
+        uses: actions/checkout@v4.0.0
         
-    - name: Run Tests with Maven
-      run: mvn -B test --file pom.xml
+      - name: Run Tests with Maven
+        run: mvn -B test --file pom.xml
 
-    - name: ServiceNow DevOps Unit Test Results
-    # You may pin to the exact commit or the version.
-      uses: ServiceNow/servicenow-devops-test-report@v2.0.0
-      with:
+      - name: ServiceNow DevOps Unit Test Results
+        # You may pin to the exact commit or the version.
+        uses: ServiceNow/servicenow-devops-test-report@v2.0.0
+        with:
           # Devops Integration Token
           devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
           # ServiceNow Instance Name
@@ -59,10 +60,10 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-    - name: ServiceNow DevOps Register Artifact
-    # You may pin to the exact commit or the version.          
-      uses: ServiceNow/servicenow-devops-register-artifact@v2.0.0
-      with:
+      - name: ServiceNow DevOps Register Artifact
+        # You may pin to the exact commit or the version.
+        uses: ServiceNow/servicenow-devops-register-artifact@v2.0.0
+        with:
           # Devops Integration Token
           devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
           # ServiceNow Instance URL
@@ -76,7 +77,7 @@ jobs:
           # List of Artifacts to be registered
           artifacts: '[
               {
-                  "name": "app-devops-cicd.jar",
+                  "name": "app-devops-ci.jar",
                   "version": "1.${{ github.run_number }}",
                   "semanticVersion": "1.${{ github.run_number }}.0",
                   "repositoryName": "${{ github.repository }}"
@@ -84,115 +85,47 @@ jobs:
           ]'
 
   sonarScan:
-  name: 'Sonar Scan'
-  needs: registerArtifact
-  runs-on: ubuntu-latest
-  steps:
-  - name: Checkout
-    uses: actions/checkout@v4.0.0
-    
-  - name: ServiceNow DevOps Sonar Scan Results
-    # You may pin to the exact commit or the version.     
-    uses: ServiceNow/servicenow-devops-sonar@v2.0.0
-    with:
-        # ServiceNow Instance URL
-        instance-url: ${{ secrets.SN_INSTANCE_URL }}
-        # Devops Integration Token
-        devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
-        # Orchestration Tool Id
-        tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
-        # Github Context
-        context-github: ${{ toJSON(github) }}
-        # Display Name of the Job
-        job-name: 'Sonar Scan'
-        # Sonar Host URL
-        sonar-host-url: ${{ secrets.SONAR_URL }}
-        # Sonar Project Key
-        sonar-project-key: ${{ secrets.SONAR_PROJECT_KEY }}
-
-securityScan:
-  name: 'Security Scan'
-  needs: sonarScan
-  runs-on: ubuntu-latest
-  steps:
-  - name: Checkout
-    uses: actions/checkout@v4.0.0
-
-  - name: ServiceNow DevOps Security Results
-    uses: ServiceNow/servicenow-devops-security-result@v2.0.0
-    with:
-        # Devops Integration Token
-        devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
-        instance-url: ${{ secrets.SN_INSTANCE_URL }}
-        tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
-        context-github: ${{ toJSON(github) }}
-        job-name: 'Security Scan'
-        security-result-attributes: '{ "scanner": "${{ secrets.SCANNER_NAME }}", "applicationName": "${{ secrets.VULNERABILITY_APPLICATION_NAME }}", "securityToolId": "<securityToolSysId>" }'
-
-
-  registerPackage:
-    name: 'Register Package'
+    name: 'Sonar Scan'
     needs: registerArtifact
     runs-on: ubuntu-latest
     steps:
-    - name: ServiceNow DevOps Register Package
-    # You may pin to the exact commit or the version.           
-      uses: ServiceNow/servicenow-devops-register-package@v2.0.0
-      with:
-          # Devops Integration Token
-          devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v4.0.0
+    
+      - name: ServiceNow DevOps Sonar Scan Results
+        # You may pin to the exact commit or the version.
+        uses: ServiceNow/servicenow-devops-sonar@v2.0.0
+        with:
           # ServiceNow Instance URL
           instance-url: ${{ secrets.SN_INSTANCE_URL }}
-          # Orchestration Tool Id of the tool created in ServiceNow
+          # Devops Integration Token
+          devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
+          # Orchestration Tool Id
           tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
           # Github Context
           context-github: ${{ toJSON(github) }}
-          # List of Artifacts in JSON format
-          artifacts: '[
-              {
-                  "name": "app-devops-cicd.jar",
-                  "version": "1.${{ github.run_number }}",
-                  "semanticVersion": "1.${{ github.run_number }}.0",
-                  "repositoryName": "${{ github.repository }}"
-              }
-          ]'
-          # Name of the Package that contains list of artifacts
-          package-name: 'app-devops-change-velocity-cicd.war'
-          # Display Name of Job
-          job-name: 'Register Package'
-          
-  change:
-    # jobs that must complete successfully before this job will run
-    needs: registerPackage
-    # type of machine to run the job on
-    runs-on: ubuntu-latest
-    name: 'ServiceNow DevOps Change'
-    steps:
-        - name: Checkout
-          uses: actions/checkout@v4.0.0
-        - name: ServiceNow Change
-          uses: ServiceNow/servicenow-devops-change@v3.1.0
-          with:
-            # Devops Integration Token
-            devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
-            # ServiceNow Instance URL
-            instance-url: ${{ secrets.SN_INSTANCE_URL }}
-            # Orchestration Tool Id
-            tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
-            # GitHub Context
-            context-github: ${{ toJSON(github) }}
-            # Display Name of the Job
-            job-name: 'ServiceNow DevOps Change'
-            change-request: '{"setCloseCode":"true","attributes":{"short_description":"Automated Software Deployment","description":"Automated Software Deployment.","assignment_group": {"name": "DevOps Connect"},"assigned_to": {"name": "Hrijula Bose"},"requested_by": {"name": "Alpaslan Kaya"},
+          # Display Name of the Job
+          job-name: 'Sonar Scan'
+          # Sonar Host URL
+          sonar-host-url: ${{ secrets.SONAR_URL }}
+          # Sonar Project Key
+          sonar-project-key: ${{ secrets.SONAR_PROJECT_KEY }}
 
-            "implementation_plan":"Software update is tested and results can be found in Test Summaries Tab; When the change is approved the implementation happens automated by the CICD pipeline within the change planned start and end time window.",
-
-            "backout_plan":"When software fails in production, the previous software release will be re-deployed.","u_mitigation_for_operational_impact":"Redirect traffic to another environment","u_time_for_mitigation_to_complete":"15-30 minutes","u_mitigation_is_successfully_tested":"No","u_validation_type":"Technical validation as part of this RFC","test_plan":"Testing if the software was successfully deployed"}}'
-          
-  deploy:
-    name: 'Deploy'
-    needs: change
+  securityScan:
+    name: 'Security Scan'
+    needs: sonarScan
     runs-on: ubuntu-latest
     steps:
-    - name: Run deployment scripts
-      run: echo 'Deployment step in progress...'
+      - name: Checkout
+        uses: actions/checkout@v4.0.0
+
+      - name: ServiceNow DevOps Security Results
+        uses: ServiceNow/servicenow-devops-security-result@v2.0.0
+        with:
+          # Devops Integration Token
+          devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
+          instance-url: ${{ secrets.SN_INSTANCE_URL }}
+          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+          context-github: ${{ toJSON(github) }}
+          job-name: 'Security Scan'
+          security-result-attributes: '{ "scanner": "${{ secrets.SCANNER_NAME }}", "applicationName": "${{ secrets.VULNERABILITY_APPLICATION_NAME }}", "securityToolId": "<securityToolSysId>" }'
