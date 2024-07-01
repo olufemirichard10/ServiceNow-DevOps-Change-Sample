@@ -1,14 +1,12 @@
-# This workflow uses ServiceNow custom actions that are certified by ServiceNow.
-
 name: CICD GitHub workflow
 
-on: 
+on:
   workflow_dispatch:
-  # push:
-  #   branches: [ "main" ]
-  # pull_request:
-  #   branches: [ "main" ]
-  #   types: [opened, synchronize, reopened]
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
@@ -16,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v3
     - name: Set up JDK 11
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v3
       with:
         java-version: '11'
         distribution: 'temurin'
@@ -32,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2.0.0
+      uses: actions/checkout@v4.0.0
         
     - name: Run Tests with Maven
       run: mvn -B test --file pom.xml
@@ -111,9 +109,66 @@ jobs:
           # Sonar Project Key
           sonar-project-key: ${{ secrets.SONAR_PROJECT_KEY }}
 
+  TwistlockScan:
+    name: 'Twistlock Scan'
+    needs: sonarScan
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4.0.0
+    
+    - name: Process Twistlock Payload
+      run: |
+        echo 'Processing JSON payload...'
+        json_payload='{
+          "pipelineName": "AppDevConsulting/ServiceNow-DevOps-Change-Sample/CICD GitHub workflow",
+          "stageName": "Twistlock Scan",
+          "buildNumber": "${{ github.run_id }}/attempts/${{ github.run_attempt }}",
+          "scanID": "Twistlock Scan",
+          "scannerName": "Twistlock",
+          "projectName": "Test Project",
+          "lastScanned": "2024-06-12 14:55:36",
+          "initiatedBy": "test@domain.com",
+          "softwareQualityDetail": [{
+            "category": "coverage",
+            "value": "80",
+            "categoryDetail": []
+          },
+          {"category": "bugs",
+            "value": "3",
+            "categoryDetail": []
+          },
+          {"category": "vulnerabilities",
+            "value": "10",
+            "categoryDetail": [{
+              "subcategory": "critical",
+              "value": "1"
+            }, {
+              "subcategory": "high",
+              "value": "3"
+            }, {
+              "subcategory": "medium",
+              "value": "2"
+            }, {
+              "subcategory": "low",
+              "value": "4"
+            }]
+          }]
+        }'
+        echo "$json_payload" > payload.json
+        curl -X POST "${{ secrets.SN_INSTANCE_URL }}/api/sn_devops/v1/devops/tool/softwarequality?toolId=2d7b09ac93030210f5e77c018bba10b3&orchestrationToolId=${{ secrets.SN_ORCHESTRATION_TOOL_ID }}" \
+          --user "${{ secrets.SN_DEVOPS_USER }}:${{ secrets.SN_DEVOPS_PASSWORD }}" \
+          --header "Content-Type: application/json" \
+          --data "@payload.json"
+      env:
+        SN_INSTANCE_URL: ${{ secrets.SN_INSTANCE_URL }}
+        SN_DEVOPS_USER: ${{ secrets.SN_DEVOPS_USER }}
+        SN_DEVOPS_PASSWORD: ${{ secrets.SN_DEVOPS_PASSWORD }}
+        SN_ORCHESTRATION_TOOL_ID: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+
   registerPackage:
     name: 'Register Package'
-    needs: registerArtifact
+    needs: TwistlockScan
     runs-on: ubuntu-latest
     steps:
     - name: ServiceNow DevOps Register Package
@@ -164,7 +219,7 @@ jobs:
             context-github: ${{ toJSON(github) }}
             # Display Name of the Job
             job-name: 'ServiceNow DevOps Change'
-            change-request: '{"attributes":{"requested_by":{"name": "DevOps System"},"cmdb_ci":{"name": "ServiceNow Corpsite"},"assignment_group":{"name": "Change management"},"priority": "2","comments": "This is a sample pipeline script to be added in your change step","work_notes": "Update this to work_notes","u_mitigation_for_operational_impact":"Redirect traffic to a database copy","u_mitigation_is_successfully_tested":"Yes","u_time_for_mitigation_to_complete":"Less than 15 minutes","u_validation_type":"Technical and business validation"}}'
+            change-request: '{"attributes":{"requested_by":{"name": "DevOps System"},"cmdb_ci":{"name": "ServiceNow Corpsite"},"assignment_group":{"name": "Change management"},"priority": "2","comments": "This is a sample pipeline script to be added in your change step","work_notes": "Update this to work_notes"}}'
             # You can specify the requested_by attribute either with name or sys_id. Example: "requested_by":{"name": "Test User"} or "requested_by": "62826bf03710200044e0bfc8bcbe5df1"
             # You can specify the assignment_group attribute either with name or sys_id. Example: "assignment_group":{"name": "Change Approval Team"} or "assignment_group": "5f721d93c0a8010e015533746de18bf9"
             # start_date: Enter the planned start date
