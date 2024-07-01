@@ -121,7 +121,7 @@ jobs:
       run: |
         echo 'Processing JSON payload...'
         json_payload='{
-          "pipelineName": "AppDevConsulting/ServiceNow-DevOps-Change-Sample/CICD GitHub workflow",
+          "pipelineName": "Akayaofficial/ServiceNow-DevOps-Change-Sample/CICD GitHub workflow",
           "stageName": "Twistlock Scan",
           "buildNumber": "${{ github.run_id }}/attempts/${{ github.run_attempt }}",
           "scanID": "Twistlock Scan",
