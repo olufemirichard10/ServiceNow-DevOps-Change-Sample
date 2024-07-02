@@ -110,61 +110,95 @@ jobs:
           sonar-project-key: ${{ secrets.SONAR_PROJECT_KEY }}
 
   TwistlockScan:
-    name: 'Twistlock Scan'
-    needs: sonarScan
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4.0.0
-    
-    - name: Process Twistlock Payload
-      run: |
-        echo 'Processing JSON payload...'
-        json_payload='{
-          "pipelineName": "Akayaofficial/ServiceNow-DevOps-Change-Sample/CICD GitHub workflow",
-          "stageName": "Twistlock Scan",
-          "buildNumber": "${{ github.run_id }}/attempts/${{ github.run_attempt }}",
-          "scanID": "Twistlock Scan",
-          "scannerName": "Twistlock",
-          "projectName": "Test Project",
-          "lastScanned": "2024-06-12 14:55:36",
-          "initiatedBy": "test@domain.com",
-          "softwareQualityDetail": [{
-            "category": "coverage",
-            "value": "80",
-            "categoryDetail": []
+  name: 'Twistlock Scan'
+  needs: sonarScan
+  runs-on: ubuntu-latest
+  steps:
+  - name: Checkout
+    uses: actions/checkout@v4.0.0
+
+  - name: Process Twistlock Payload
+    run: |
+      echo 'Processing JSON payload...'
+      json_payload='{
+        "_id": "5bd72249a0dd0e12f9b17b22",
+        "hostname": "jacob-repro-2",
+        "info": {
+          "allCompliance": {},
+          "complianceDistribution": {
+            "critical": 0,
+            "high": 1,
+            "low": 0,
+            "medium": 0,
+            "total": 1
           },
-          {"category": "bugs",
-            "value": "3",
-            "categoryDetail": []
-          },
-          {"category": "vulnerabilities",
-            "value": "10",
-            "categoryDetail": [{
-              "subcategory": "critical",
-              "value": "1"
-            }, {
-              "subcategory": "high",
-              "value": "3"
-            }, {
-              "subcategory": "medium",
-              "value": "2"
-            }, {
-              "subcategory": "low",
-              "value": "4"
-            }]
-          }]
-        }'
-        echo "$json_payload" > payload.json
-        curl -X POST "${{ secrets.SN_INSTANCE_URL }}/api/sn_devops/v1/devops/tool/softwarequality?toolId=ab1b11b6474b0690797f466b416d43cc&orchestrationToolId=${{ secrets.SN_ORCHESTRATION_TOOL_ID }}" \
-          --user "${{ secrets.SN_DEVOPS_USER }}:${{ secrets.SN_DEVOPS_PASSWORD }}" \
-          --header "Content-Type: application/json" \
-          --data "@payload.json"
-      env:
-        SN_INSTANCE_URL: ${{ secrets.SN_INSTANCE_URL }}
-        SN_DEVOPS_USER: ${{ secrets.SN_DEVOPS_USER }}
-        SN_DEVOPS_PASSWORD: ${{ secrets.SN_DEVOPS_PASSWORD }}
-        SN_ORCHESTRATION_TOOL_ID: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+          "complianceVulnerabilities": [
+            {
+              "cause": "",
+              "cve": "",
+              "cvss": 0,
+              "description": "",
+              "exploit": "",
+              "id": 41,
+              "layerTime": 0,
+              "link": "",
+              "packageName": "",
+              "packageVersion": "",
+              "published": 0,
+              "riskFactors": null,
+              "severity": "high",
+              "status": "",
+              "templates": [],
+              "text": "",
+              "title": "(CIS_Docker_CE_v1.1.0 - 4.1) Image should be created with a non-root user",
+              "twistlock": false,
+              "type": "image",
+              "vecStr": ""
+            }
+          ],
+          "cveVulnerabilities": [
+            {
+              "cause": "",
+              "cve": "CVE-2018-6485",
+              "cvss": 9.8,
+              "description": "An integer overflow in the implementation of the posix_memalign in memalign functions in the GNU C Library (aka glibc or libc6) 2.26 and earlier could cause these functions to return a pointer to a heap area that is too small, potentially leading to heap corruption.",
+              "exploit": "",
+              "id": 46,
+              "layerTime": 1539910074,
+              "link": "https://people.canonical.com/~ubuntu-security/cve/2018/CVE-2018-6485",
+              "packageName": "libc6 (glibc)",
+              "packageVersion": "2.27-3ubuntu1",
+              "published": 1517495340,
+              "riskFactors": {
+                "Attack complexity: low": {},
+                "Attack vector: network": {},
+                "Medium severity": {},
+                "Recent vulnerability": {}
+              },
+              "severity": "medium",
+              "status": "needed",
+              "templates": [],
+              "text": "",
+              "title": "",
+              "twistlock": false,
+              "type": "image",
+              "vecStr": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+            }
+          ]
+        }
+      }'
+      echo "$json_payload" > payload.json
+
+      curl -X POST "${{ secrets.SN_INSTANCE_URL }}/api/sn_devops/v1/devops/tool/softwarequality?toolId=2d7b09ac93030210f5e77c018bba10b3&orchestrationToolId=${{ secrets.SN_ORCHESTRATION_TOOL_ID }}" \
+        --user "${{ secrets.SN_DEVOPS_USER }}:${{ secrets.SN_DEVOPS_PASSWORD }}" \
+        --header "Content-Type: application/json" \
+        --data "@payload.json"
+    env:
+      SN_INSTANCE_URL: ${{ secrets.SN_INSTANCE_URL }}
+      SN_DEVOPS_USER: ${{ secrets.SN_DEVOPS_USER }}
+      SN_DEVOPS_PASSWORD: ${{ secrets.SN_DEVOPS_PASSWORD }}
+      SN_ORCHESTRATION_TOOL_ID: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+
 
   registerPackage:
     name: 'Register Package'
