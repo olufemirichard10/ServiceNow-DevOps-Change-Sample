@@ -110,95 +110,94 @@ jobs:
           sonar-project-key: ${{ secrets.SONAR_PROJECT_KEY }}
 
   TwistlockScan:
-  name: 'Twistlock Scan'
-  needs: sonarScan
-  runs-on: ubuntu-latest
-  steps:
-  - name: Checkout
-    uses: actions/checkout@v4.0.0
+    name: 'Twistlock Scan'
+    needs: sonarScan
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4.0.0
 
-  - name: Process Twistlock Payload
-    run: |
-      echo 'Processing JSON payload...'
-      json_payload='{
-        "_id": "5bd72249a0dd0e12f9b17b22",
-        "hostname": "jacob-repro-2",
-        "info": {
-          "allCompliance": {},
-          "complianceDistribution": {
-            "critical": 0,
-            "high": 1,
-            "low": 0,
-            "medium": 0,
-            "total": 1
-          },
-          "complianceVulnerabilities": [
-            {
-              "cause": "",
-              "cve": "",
-              "cvss": 0,
-              "description": "",
-              "exploit": "",
-              "id": 41,
-              "layerTime": 0,
-              "link": "",
-              "packageName": "",
-              "packageVersion": "",
-              "published": 0,
-              "riskFactors": null,
-              "severity": "high",
-              "status": "",
-              "templates": [],
-              "text": "",
-              "title": "(CIS_Docker_CE_v1.1.0 - 4.1) Image should be created with a non-root user",
-              "twistlock": false,
-              "type": "image",
-              "vecStr": ""
-            }
-          ],
-          "cveVulnerabilities": [
-            {
-              "cause": "",
-              "cve": "CVE-2018-6485",
-              "cvss": 9.8,
-              "description": "An integer overflow in the implementation of the posix_memalign in memalign functions in the GNU C Library (aka glibc or libc6) 2.26 and earlier could cause these functions to return a pointer to a heap area that is too small, potentially leading to heap corruption.",
-              "exploit": "",
-              "id": 46,
-              "layerTime": 1539910074,
-              "link": "https://people.canonical.com/~ubuntu-security/cve/2018/CVE-2018-6485",
-              "packageName": "libc6 (glibc)",
-              "packageVersion": "2.27-3ubuntu1",
-              "published": 1517495340,
-              "riskFactors": {
-                "Attack complexity: low": {},
-                "Attack vector: network": {},
-                "Medium severity": {},
-                "Recent vulnerability": {}
-              },
-              "severity": "medium",
-              "status": "needed",
-              "templates": [],
-              "text": "",
-              "title": "",
-              "twistlock": false,
-              "type": "image",
-              "vecStr": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
-            }
-          ]
-        }
-      }'
-      echo "$json_payload" > payload.json
+    - name: Process Twistlock Payload
+      run: |
+        echo 'Processing JSON payload...'
+        json_payload='{
+          "_id": "5bd72249a0dd0e12f9b17b22",
+          "hostname": "jacob-repro-2",
+          "info": {
+            "allCompliance": {},
+            "complianceDistribution": {
+              "critical": 0,
+              "high": 1,
+              "low": 0,
+              "medium": 0,
+              "total": 1
+            },
+            "complianceVulnerabilities": [
+              {
+                "cause": "",
+                "cve": "",
+                "cvss": 0,
+                "description": "",
+                "exploit": "",
+                "id": 41,
+                "layerTime": 0,
+                "link": "",
+                "packageName": "",
+                "packageVersion": "",
+                "published": 0,
+                "riskFactors": null,
+                "severity": "high",
+                "status": "",
+                "templates": [],
+                "text": "",
+                "title": "(CIS_Docker_CE_v1.1.0 - 4.1) Image should be created with a non-root user",
+                "twistlock": false,
+                "type": "image",
+                "vecStr": ""
+              }
+            ],
+            "cveVulnerabilities": [
+              {
+                "cause": "",
+                "cve": "CVE-2018-6485",
+                "cvss": 9.8,
+                "description": "An integer overflow in the implementation of the posix_memalign in memalign functions in the GNU C Library (aka glibc or libc6) 2.26 and earlier could cause these functions to return a pointer to a heap area that is too small, potentially leading to heap corruption.",
+                "exploit": "",
+                "id": 46,
+                "layerTime": 1539910074,
+                "link": "https://people.canonical.com/~ubuntu-security/cve/2018/CVE-2018-6485",
+                "packageName": "libc6 (glibc)",
+                "packageVersion": "2.27-3ubuntu1",
+                "published": 1517495340,
+                "riskFactors": {
+                  "Attack complexity: low": {},
+                  "Attack vector: network": {},
+                  "Medium severity": {},
+                  "Recent vulnerability": {}
+                },
+                "severity": "medium",
+                "status": "needed",
+                "templates": [],
+                "text": "",
+                "title": "",
+                "twistlock": false,
+                "type": "image",
+                "vecStr": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+              }
+            ]
+          }
+        }'
+        echo "$json_payload" > payload.json
 
-      curl -X POST "${{ secrets.SN_INSTANCE_URL }}/api/sn_devops/v1/devops/tool/softwarequality?toolId=2d7b09ac93030210f5e77c018bba10b3&orchestrationToolId=${{ secrets.SN_ORCHESTRATION_TOOL_ID }}" \
-        --user "${{ secrets.SN_DEVOPS_USER }}:${{ secrets.SN_DEVOPS_PASSWORD }}" \
-        --header "Content-Type: application/json" \
-        --data "@payload.json"
-    env:
-      SN_INSTANCE_URL: ${{ secrets.SN_INSTANCE_URL }}
-      SN_DEVOPS_USER: ${{ secrets.SN_DEVOPS_USER }}
-      SN_DEVOPS_PASSWORD: ${{ secrets.SN_DEVOPS_PASSWORD }}
-      SN_ORCHESTRATION_TOOL_ID: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
-
+        curl -X POST "${{ secrets.SN_INSTANCE_URL }}/api/sn_devops/v1/devops/tool/softwarequality?toolId=2d7b09ac93030210f5e77c018bba10b3&orchestrationToolId=${{ secrets.SN_ORCHESTRATION_TOOL_ID }}" \
+          --user "${{ secrets.SN_DEVOPS_USER }}:${{ secrets.SN_DEVOPS_PASSWORD }}" \
+          --header "Content-Type: application/json" \
+          --data "@payload.json"
+      env:
+        SN_INSTANCE_URL: ${{ secrets.SN_INSTANCE_URL }}
+        SN_DEVOPS_USER: ${{ secrets.SN_DEVOPS_USER }}
+        SN_DEVOPS_PASSWORD: ${{ secrets.SN_DEVOPS_PASSWORD }}
+        SN_ORCHESTRATION_TOOL_ID: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
 
   registerPackage:
     name: 'Register Package'
@@ -221,48 +220,4 @@ jobs:
           artifacts: '[
               {
                   "name": "app-devops-cicd.jar",
-                  "version": "1.${{ github.run_number }}",
-                  "semanticVersion": "1.${{ github.run_number }}.0",
-                  "repositoryName": "${{ github.repository }}"
-              }
-          ]'
-          # Name of the Package that contains list of artifacts
-          package-name: 'app-devops-change-velocity-cicd.war'
-          # Display Name of Job
-          job-name: 'Register Package'
-          
-  change:
-    # jobs that must complete successfully before this job will run
-    needs: registerPackage
-    # type of machine to run the job on
-    runs-on: ubuntu-latest
-    name: 'ServiceNow DevOps Change'
-    steps:
-        - name: Checkout
-          uses: actions/checkout@v4.0.0
-        - name: ServiceNow Change
-          uses: ServiceNow/servicenow-devops-change@v4.0.0
-          with:
-            # Devops Integration Token
-            devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
-            # ServiceNow Instance URL
-            instance-url: ${{ secrets.SN_INSTANCE_URL }}
-            # Orchestration Tool Id
-            tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
-            # GitHub Context
-            context-github: ${{ toJSON(github) }}
-            # Display Name of the Job
-            job-name: 'ServiceNow DevOps Change'
-            change-request: '{"attributes":{"requested_by":{"name": "DevOps System"},"cmdb_ci":{"name": "ServiceNow Corpsite"},"assignment_group":{"name": "Change management"},"priority": "2","comments": "This is a sample pipeline script to be added in your change step","work_notes": "Update this to work_notes"}}'
-            # You can specify the requested_by attribute either with name or sys_id. Example: "requested_by":{"name": "Test User"} or "requested_by": "62826bf03710200044e0bfc8bcbe5df1"
-            # You can specify the assignment_group attribute either with name or sys_id. Example: "assignment_group":{"name": "Change Approval Team"} or "assignment_group": "5f721d93c0a8010e015533746de18bf9"
-            # start_date: Enter the planned start date
-            # end_date: Enter the planned end date
-          
-  deploy:
-    name: 'Deploy'
-    needs: change
-    runs-on: ubuntu-latest
-    steps:
-    - name: Run deployment scripts
-      run: echo 'Deployment step in progress...'
+                  "version": "1.${
