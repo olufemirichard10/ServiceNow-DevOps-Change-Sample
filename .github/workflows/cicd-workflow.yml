@@ -192,7 +192,7 @@ jobs:
         }'
         echo "$json_payload" > payload.json
 
-        curl -X POST "${{ secrets.SN_INSTANCE_URL }}/api/sn_devops/v1/devops/tool/softwarequality?toolId=2d7b09ac93030210f5e77c018bba10b3&orchestrationToolId=${{ secrets.SN_ORCHESTRATION_TOOL_ID }}" \
+        curl -X POST "${{ secrets.SN_INSTANCE_URL }}/api/sn_devops/v1/devops/tool/softwarequality?toolId=ab1b11b6474b0690797f466b416d43cc&orchestrationToolId=${{ secrets.SN_ORCHESTRATION_TOOL_ID }}" \
           --user "${{ secrets.SN_DEVOPS_USER }}:${{ secrets.SN_DEVOPS_PASSWORD }}" \
           --header "Content-Type: application/json" \
           --data "@payload.json"
