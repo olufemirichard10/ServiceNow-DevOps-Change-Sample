@@ -120,6 +120,14 @@ jobs:
     - name: Process Twistlock Payload
       run: |
         echo 'Processing JSON payload...'
+        cat <<EOF > payloads/prisma_payload_1.json
+        {
+          "pipelineName": "Akayaofficial/ServiceNow-DevOps-Change-Sample/CICD GitHub workflow",
+          "stageName": "Twistlock Scan",
+          "buildNumber": "${{ github.run_id }}/attempts/${{ github.run_attempt }}",
+          "otherPayloadData": $(cat payloads/prisma_payload_1.json)
+        }
+        EOF
         curl -X POST "${{ secrets.SN_INSTANCE_URL }}/api/sn_devops/v1/devops/tool/softwarequality?toolId=ab1b11b6474b0690797f466b416d43cc&orchestrationToolId=${{ secrets.SN_ORCHESTRATION_TOOL_ID }}" \
           --user "${{ secrets.SN_DEVOPS_USER }}:${{ secrets.SN_DEVOPS_PASSWORD }}" \
           --header "Content-Type: application/json" \
@@ -191,8 +199,4 @@ jobs:
           
   deploy:
     name: 'Deploy'
-    needs: change
-    runs-on: ubuntu-latest
-    steps:
-    - name: Run deployment scripts
-      run: echo 'Deployment step in progress...'
+   
