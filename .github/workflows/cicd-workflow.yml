@@ -199,4 +199,8 @@ jobs:
           
   deploy:
     name: 'Deploy'
-   
+    needs: change
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run deployment scripts
+      run: echo 'Deployment step in progress...'
