@@ -114,22 +114,21 @@ jobs:
     needs: sonarScan
     runs-on: ubuntu-latest
     steps:
-  - name: Checkout
-    uses: actions/checkout@v4.0.0
+    - name: Checkout
+      uses: actions/checkout@v4.0.0
 
-  - name: Process Twistlock Payload
-    run: |
-      echo 'Processing JSON payload...'
-      curl -X POST "${{ secrets.SN_INSTANCE_URL }}/api/sn_devops/v1/devops/tool/softwarequality?toolId=ab1b11b6474b0690797f466b416d43cc&orchestrationToolId=${{ secrets.SN_ORCHESTRATION_TOOL_ID }}" \
-        --user "${{ secrets.SN_DEVOPS_USER }}:${{ secrets.SN_DEVOPS_PASSWORD }}" \
-        --header "Content-Type: application/json" \
-        --data @payloads/prisma_payload_1.json
-    env:
-      SN_INSTANCE_URL: ${{ secrets.SN_INSTANCE_URL }}
-      SN_DEVOPS_USER: ${{ secrets.SN_DEVOPS_USER }}
-      SN_DEVOPS_PASSWORD: ${{ secrets.SN_DEVOPS_PASSWORD }}
-      SN_ORCHESTRATION_TOOL_ID: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
-
+    - name: Process Twistlock Payload
+      run: |
+        echo 'Processing JSON payload...'
+        curl -X POST "${{ secrets.SN_INSTANCE_URL }}/api/sn_devops/v1/devops/tool/softwarequality?toolId=ab1b11b6474b0690797f466b416d43cc&orchestrationToolId=${{ secrets.SN_ORCHESTRATION_TOOL_ID }}" \
+          --user "${{ secrets.SN_DEVOPS_USER }}:${{ secrets.SN_DEVOPS_PASSWORD }}" \
+          --header "Content-Type: application/json" \
+          --data @payloads/prisma_payload_1.json
+      env:
+        SN_INSTANCE_URL: ${{ secrets.SN_INSTANCE_URL }}
+        SN_DEVOPS_USER: ${{ secrets.SN_DEVOPS_USER }}
+        SN_DEVOPS_PASSWORD: ${{ secrets.SN_DEVOPS_PASSWORD }}
+        SN_ORCHESTRATION_TOOL_ID: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
 
   registerPackage:
     name: 'Register Package'
