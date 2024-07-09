@@ -1,151 +1,62 @@
 {
-  "results": [
-    {
-      "id": "sha256:befa03b1c841ddd667641ef61a0a0d19df5971423ef06f8401c0cff059c06a6f",
-      "name": "artifactory.aexp.com/docker-byoi-app/go-hello-world@sha256:a929579550253ec89f622f92546ca6fe941b5adf58a8479245d2ae85b842968f",
-      "distro": "",
-      "digest": "sha256:a929579550253ec89f622f92546ca6fe941b5adf58a8479245d2ae85b842968f",
-      "collections": ["All", "Hydra_Active_Blocking_Exception", "test"],
-      "packages": [
-        {
-          "type": "go",
-          "name": "github.com/klauspost/compress",
-          "version": "v1.17.8",
-          "path": "/nats-server"
-        },
-        {
-          "type": "go",
-          "name": "github.com/minio/highwayhash",
-          "version": "v1.0.2",
-          "path": "/nats-server"
-        },
-        {
-          "type": "go",
-          "name": "github.com/nats-io/jwt/v2",
-          "version": "v2.5.7",
-          "path": "/nats-server"
-        },
-        {
-          "type": "go",
-          "name": "github.com/nats-io/nkeys",
-          "version": "v0.4.7",
-          "path": "/nats-server"
-        },
-        {
-          "type": "go",
-          "name": "github.com/nats-io/nuid",
-          "version": "v1.0.1",
-          "path": "/nats-server"
-        },
-        {
-          "type": "go",
-          "name": "go.uber.org/automaxprocs",
-          "version": "v1.5.3",
-          "path": "/nats-server"
-        },
-        {
-          "type": "go",
-          "name": "golang.org/x/crypto",
-          "version": "v0.23.0",
-          "path": "/nats-server"
-        },
-        {
-          "type": "go",
-          "name": "golang.org/x/sys",
-          "version": "v0.20.0",
-          "path": "/nats-server"
-        },
-        {
-          "type": "go",
-          "name": "golang.org/x/time",
-          "version": "v0.5.0",
-          "path": "/nats-server"
-        }
-      ],
-      "applications": [
-        {
-          "name": "go",
-          "version": "1.22.3",
-          "path": "/nats-server"
-        }
-      ],
-      "complianceDistribution": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 0,
-        "total": 0
-      },
-      "complianceScanPassed": true,
-      "vulnerabilityDistribution": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 0,
-        "total": 0
-      },
-      "vulnerabilityScanPassed": true,
-      "history": [
-        {
-          "created": "2024-03-16T08:49:06Z",
-          "instruction": "ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/"
-        },
-        {
-          "created": "2024-05-22T19:46:57Z",
-          "instruction": "COPY file:bde3b96323851506bdb8dee1a5c849f57fed0675a388571c8ae8bdb78fbb308f in /nats-server "
-        },
-        {
-          "created": "2024-05-22T19:46:57Z",
-          "instruction": "COPY file:2c51166f33066351f3cfe3734f884c41f36fb66575bdde453c5c93e819cfae35 in /nats-server.conf "
-        },
-        {
-          "created": "2024-05-22T19:46:57Z",
-          "instruction": "EXPOSE 4222 6222 8222"
-        },
-        {
-          "created": "2024-05-22T19:46:57Z",
-          "instruction": "ENTRYPOINT [\"/nats-server\"]"
-        },
-        {
-          "created": "2024-05-22T19:46:57Z",
-          "instruction": "CMD [\"--config\" \"nats-server.conf\"]"
-        },
-        {
-          "created": "2024-06-13T21:54:16Z",
-          "instruction": "USER 1000"
-        },
-        {
-          "created": "2024-06-13T21:54:17Z",
-          "instruction": "ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/:/"
-        },
-        {
-          "created": "2024-06-13T21:54:17Z",
-          "instruction": "COPY file:bde3b96323851506bdb8dee1a5c849f57fed0675a388571c8ae8bdb78fbb308f in /nats-server "
-        },
-        {
-          "created": "2024-06-13T21:54:18Z",
-          "instruction": "COPY file:a632a7c76f6bd372d975470ba14700766bd6eb0399c8c101b4aa94f43356bef1 in /nats-server.conf "
-        },
-        {
-          "created": "2024-06-13T21:54:18Z",
-          "instruction": "HEALTHCHECK &{\"NONE\" \"0s\" \"0s\" \"0s\" '\\x00'}"
-        },
-        {
-          "created": "2024-06-13T21:54:18Z",
-          "instruction": "EXPOSE 4222 6222"
-        },
-        {
-          "created": "2024-06-13T21:54:18Z",
-          "instruction": "ENTRYPOINT [\"/nats-server\"]"
-        },
-        {
-          "created": "2024-06-13T21:54:18Z",
-          "instruction": "CMD [\"--config\" \"nats-server.conf\"]"
-        }
-      ],
-      "scanTime": "2024-06-18T23:07:54.497090717Z",
-      "scanID": "6672134a5d9e92c152d5beab"
-    }
-  ],
-  "consoleURL": "https://ivmprismacicd001.aexp.com/#!/monitor/vulnerabilities/images/ci?search=sha256%3Abefa03b1c841ddd667641ef61a0a0d19df5971423ef06f8401c0cff059c06a6f"
+ "results": [
+ {
+ "id": "003",
+ "name" : "Twistlock",
+ "complianceScanPassed": true,
+ "vulnerabilities": [
+ {
+ "id": "CVE ID",
+ "status": "CVE fix status",
+"cvss": "CVSS",
+"vector": "CVSS vector",
+"description": "CVE description",
+"severity": "CVE severity",
+"packageName": "package name",
+"purl": "pkg:golang/golang.org/x/net@v0.0.0-20210405180319-
+a5a99cb37ef4",
+ "packageVersion": "package version",
+"link": "link to the CVE as provided in the Console UI",
+"riskFactors": [
+ "Attack vector: network",
+"High severity",
+"Has fix"
+ ],
+ "tags": [
+ "ignored",
+"in review"
+ ],
+"impactedVersions": [
+ "impacted versions phrase1",
+"impacted versions phrase2"
+ ],
+"publishedDate": "publish date",
+ "discoveredDate": "discovered date",
+ "graceDays": "grace days",
+"fixedDate": "vendor fixed date, if exists",
+"layerTime": "layer time of the image layer to which the 
+vulnerability belongs"
+ }
+ ],
+ "vulnerabilityDistribution": {
+ "critical": 0,
+ "high": 1,
+ "medium": 0,
+"low": 19,
+ "total": 20
+ },
+ "vulnerabilitiesScanPassed": true,
+ "history": [
+ {
+ "created": "time when the image layer was created",
+"instruction": "Dockerfile instruction and arguments used 
+to create the layer"
+ }
+ ],
+ "scanTime": "2024-06-12 14:55:36",
+ "scanID": "003"
+ }
+ ],
+ "consoleURL": "https://url",
+
 }
