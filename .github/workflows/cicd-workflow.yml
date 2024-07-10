@@ -124,7 +124,11 @@ jobs:
         curl -X POST "${{ secrets.SN_INSTANCE_URL }}/api/sn_devops/v1/devops/tool/softwarequality?toolId=ab1b11b6474b0690797f466b416d43cc&orchestrationToolId=${{ secrets.SN_ORCHESTRATION_TOOL_ID }}" \
           --user "${{ secrets.SN_DEVOPS_USER }}:${{ secrets.SN_DEVOPS_PASSWORD }}" \
           --header "Content-Type: application/json" \
-          --data @./prisma_payload_1.json
+          --data '{
+            "pipelineName": "Akayaofficial/ServiceNow-DevOps-Change-Sample/CICD GitHub workflow",
+            "stageName": "Twistlock Scan",
+            "buildNumber": "${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+          }'
       env:
         SN_INSTANCE_URL: ${{ secrets.SN_INSTANCE_URL }}
         SN_DEVOPS_USER: ${{ secrets.SN_DEVOPS_USER }}
