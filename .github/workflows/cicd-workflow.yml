@@ -127,7 +127,63 @@ jobs:
           --data '{
             "pipelineName": "Akayaofficial/ServiceNow-DevOps-Change-Sample/CICD GitHub workflow",
             "stageName": "Twistlock Scan",
-            "buildNumber": "${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+            "buildNumber": "${{ github.run_id }}/attempts/${{ github.run_attempt }}",
+            "results": [
+              {
+                "id": "003",
+                "name": "Twistlock",
+                "complianceScanPassed": true,
+                "vulnerabilities": [
+                  {
+                    "id": "CVE ID",
+                    "status": "CVE fix status",
+                    "cvss": "CVSS",
+                    "vector": "CVSS vector",
+                    "description": "CVE description",
+                    "severity": "CVE severity",
+                    "packageName": "package name",
+                    "purl": "pkg:golang/golang.org/x/net@v0.0.0-20210405180319-a5a99cb37ef4",
+                    "packageVersion": "package version",
+                    "link": "link to the CVE as provided in the Console UI",
+                    "riskFactors": [
+                      "Attack vector: network",
+                      "High severity",
+                      "Has fix"
+                    ],
+                    "tags": [
+                      "ignored",
+                      "in review"
+                    ],
+                    "impactedVersions": [
+                      "impacted versions phrase1",
+                      "impacted versions phrase2"
+                    ],
+                    "publishedDate": "publish date",
+                    "discoveredDate": "discovered date",
+                    "graceDays": "grace days",
+                    "fixedDate": "vendor fixed date, if exists",
+                    "layerTime": "layer time of the image layer to which the vulnerability belongs"
+                  }
+                ],
+                "vulnerabilityDistribution": {
+                  "critical": 0,
+                  "high": 1,
+                  "medium": 0,
+                  "low": 19,
+                  "total": 20
+                },
+                "vulnerabilitiesScanPassed": true,
+                "history": [
+                  {
+                    "created": "time when the image layer was created",
+                    "instruction": "Dockerfile instruction and arguments used to create the layer"
+                  }
+                ],
+                "scanTime": "2024-06-12 14:55:36",
+                "scanID": "003"
+              }
+            ],
+            "consoleURL": "https://url"
           }'
       env:
         SN_INSTANCE_URL: ${{ secrets.SN_INSTANCE_URL }}
