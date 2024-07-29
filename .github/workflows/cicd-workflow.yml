@@ -222,7 +222,7 @@ jobs:
           # Display Name of Job
           job-name: 'Register Package'
           
-change:
+ change:
   # jobs that must complete successfully before this job will run
   needs: registerPackage
   # type of machine to run the job on
