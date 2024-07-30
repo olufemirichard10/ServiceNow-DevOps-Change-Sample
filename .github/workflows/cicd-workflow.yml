@@ -248,15 +248,15 @@ jobs:
             "attributes": {
               "requested_by": {"name": "DevOps System"},
               "cmdb_ci": {"name": "ServiceNow Corpsite"},
-              "cmdb_ci_service": {"name": "ServiceNow Corpsite Service"},
+              "cmdb_ci_service_business": {"name": "ServiceNow Corpsite Service"},
               "assignment_group": {"name": "Change management"},
               "priority": "2",
               "comments": "This is a sample pipeline script to be added in your change step",
               "work_notes": "Update this to work_notes",
-              "u_mitigation_for_operational_impact": "Active/Passive (Blue/Green) fail-over",
+              "u_mitigation_for_operational_impact": "Back change out",
               "u_time_for_mitigation_to_complete": "Less than 15 minutes",
               "u_mitigation_is_successfully_tested": "Yes",
-              "u_validation_type": "Technical validation as part of this RFC, business validation will occur on the next business day"
+              "u_validation_type": "Technical validation only"
             }
           }
         # You can specify the requested_by attribute either with name or sys_id.
