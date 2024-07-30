@@ -248,6 +248,7 @@ jobs:
             "attributes": {
               "requested_by": {"name": "DevOps System"},
               "cmdb_ci": {"name": "ServiceNow Corpsite"},
+              "business_service": {"name": "ServiceNow Corpsite Service"},
               "assignment_group": {"name": "Change management"},
               "priority": "2",
               "comments": "This is a sample pipeline script to be added in your change step",
