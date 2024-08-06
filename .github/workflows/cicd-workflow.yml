@@ -249,6 +249,7 @@ jobs:
               "requested_by": {"name": "DevOps System"},
               "cmdb_ci": {"name": "ServiceNow Corpsite"},
               "business_service": {"name": "ServiceNow Corpsite Service"},
+              "requested_by": {"name": "Alpaslan Kaya"},
               "assignment_group": {"name": "Developer Connect"},
               "assigned_to": {"name": "Alpaslan Kaya"},
               "priority": "2",
