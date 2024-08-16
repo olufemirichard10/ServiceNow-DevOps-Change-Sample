@@ -247,7 +247,7 @@ jobs:
           {
             "attributes": {
               "requested_by": {"name": "DevOps System"},
-              "cmdb_ci": {"name": "ServiceNow Corpsite"},
+              "cmdb_ci": {"name": "ServiceNow CI No Incidents"},
               "business_service": {"name": "ServiceNow Corpsite Service"},
               "requested_by": {"name": "Alpaslan Kaya"},
               "assignment_group": {"name": "Developer Connect"},
